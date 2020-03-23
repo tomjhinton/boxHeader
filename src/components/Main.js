@@ -25,7 +25,7 @@ const uniforms = {
           u_res: { value: new THREE.Vector2(window.innerWidth/2, window.innerHeight/2) }
         }
 
-function PlaneS(props) {
+function LeftEye(props) {
   // This reference will give us direct access to the mesh
   const mesh = useRef()
 
@@ -52,7 +52,7 @@ function PlaneS(props) {
       onClick={e => setActive(!active)}
       onPointerOver={e => {
         setHover(true)
-        // console.log(e)
+        console.log(e)
       }}
       onPointerOut={e => setHover(false)}>
     <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
@@ -124,7 +124,7 @@ let sad, surprised, happy
 let ready =  true
 webcamElement.addEventListener('play', () => {
 const canvas = document.getElementById('canvas')
-const displaySize = { width: webcamElement.width, height: webcamElement.height }
+const displaySize = { width: webcamElement.offsetWidth, height: webcamElement.offsetHeight }
 faceapi.matchDimensions(webcamElement, displaySize)
 setInterval(async () => {
   if(ready){
@@ -134,7 +134,14 @@ setInterval(async () => {
       happy = resizedDetections[0].expressions.happy
       surprised = resizedDetections[0].expressions.surprised
     }
-    console.log(resizedDetections)
+    if(resizedDetections[0]){
+    // console.log(resizedDetections[0].landmarks.getNose())
+    this.setState({noseX: `${resizedDetections[0].landmarks.getNose()[0].x} `, noseY: `${resizedDetections[0].landmarks.getNose()[0].y}`})
+    console.log(this.state)
+    console.log(resizedDetections[0].landmarks.getNose())
+    // mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1
+    // mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
+  }
 }
 
 }, 100)
@@ -165,12 +172,12 @@ setInterval(async () => {
 
     return (
       <div  className="body">
-      <video autoPlay playsInline muted id="webcam" width="500px" height="500px" poster='' ></video>
+      <video autoPlay playsInline muted id="webcam"  poster='' ></video>
 
       <Canvas>
       <ambientLight />
         <pointLight position={[10, 10, 10]} />
-        <PlaneS position={[0, 0, 0]} />
+        <LeftEye position={[(this.state.noseX/ window.innerWidth ) * 2 - 1, - ( this.state.noseY / window.innerHeight ) * 2 + 1, 0]} />
         </Canvas>
 
 
